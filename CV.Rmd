@@ -1,0 +1,60 @@
+---
+name: John
+surname: Doe
+phone: +48 123 456 789
+email: "John.Doe@someemail.com"
+github: john-d
+linkedin: john-d-1234567890
+date: "`r Sys.setlocale('LC_TIME', 'English');format(Sys.time(), '%B %Y')`"
+output: 
+  vitae::moderncv
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(vitae)
+library(tidyverse)
+library(readxl)
+```
+
+# About me
+
+-   Born 12 August, 2000
+-   Experienced in ...
+-   Key skills: ...
+
+# Education
+
+```{r}
+read_excel("data.xlsx", sheet="Education") %>% 
+  detailed_entries(what=Degree, when=Year, with=Institution, where=Location)
+```
+
+# Work experience
+
+```{r}
+read_excel("data.xlsx", sheet="Work_experience") %>%
+  mutate(Description=if_else(is.na(Description), vector(mode="list", length=1), str_split(Description, "\r\n"))) %>% 
+  detailed_entries(what=`Job Title`, when=Dates, with=Company, where=Location, why=Description)
+```
+
+# Placements
+
+```{r}
+read_excel("data.xlsx", sheet="Placements") %>%
+  detailed_entries(when=Date, what=Company, where=Location)
+```
+
+# Skills
+
+```{r}
+read_excel("data.xlsx", sheet="Skills") %>%
+  brief_entries(what=Skill, with=Details)
+```
+
+# Publications
+
+```{r}
+bibliography_entries("packages.bib")
+```
+
